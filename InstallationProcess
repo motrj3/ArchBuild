@@ -1,1 +1,11 @@
+## Prep
+Before installing Arch on my current Ubuntu Laptop, I transferred any important files from the 
+Boot drive to a separate storage drive on the Laptop 
+
+##Install
+First step is to DL an ISO image of arch and use GnuPG to verify the integrity of the file using
+   gpg --keyserver-options auto-key-retrieve --verify archlinux-version-x86_64.iso.sig
+Using BalenaEtcher I created a bootable disk using the ISO file and a USB Drive
+--Issue 1
+
 
