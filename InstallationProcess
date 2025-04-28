@@ -3,9 +3,12 @@ Before installing Arch on my current Ubuntu Laptop, I transferred any important 
 Boot drive to a separate storage drive on the Laptop 
 
 ##Install
-First step is to DL an ISO image of arch and use GnuPG to verify the integrity of the file using
-   gpg --keyserver-options auto-key-retrieve --verify archlinux-version-x86_64.iso.sig
+First step is to download an ISO image of arch and use the GnuPG tool to verify the integrity of the file using command 
+
+   'gpg --keyserver-options auto-key-retrieve --verify archlinux-2025.04.01-x86_64.iso.sig'
+
 Using BalenaEtcher I created a bootable disk using the ISO file and a USB Drive
+
 --Issue 1
 
 
