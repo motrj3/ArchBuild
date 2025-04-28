@@ -1,14 +1,62 @@
-## Prep
-Before installing Arch on my current Ubuntu Laptop, I transferred any important files from the 
-Boot drive to a separate storage drive on the Laptop 
+##Prep
+Before installing Arch on my current Ubuntu Laptop, I transferred any important files from the boot drive 
+to a separate storage drive on the Laptop 
 
 ##Install
-First step is to download an ISO image of arch and use the GnuPG tool to verify the integrity of the file using command 
+First step is to download an ISO image of Arch and use the GnuPG tool to verify the integrity of the file using the command 
 
    'gpg --keyserver-options auto-key-retrieve --verify archlinux-2025.04.01-x86_64.iso.sig'
 
-Using BalenaEtcher I created a bootable disk using the ISO file and a USB Drive
+Using BalenaEtcher, I created a bootable disk using the ISO file and a USB Drive
 
---Issue 1
+--Issue 1 (See Troubleshooting)
 
+After booting into the command line, I started the configuration 
 
+   ##Verify Boot Mode (Returned correct 64-bit mode)
+       /sys/firmware/efi/fw_platform_size
+
+   ##Connect to WiFi
+      ip link (verify network interfaces)
+      rfkill (check wifi card status)
+      iwctl (enable wifi connectivity)
+      dhcpcd (enable DHCP)
+   
+   ##Check System Clock
+      timedatect1
+
+   ##Partition Drive
+      cfdisk
+         GPT
+            1GB EFI System
+            50GB Root
+            8G Swap
+   
+   ##Format & Mount Partitions
+
+   ##Select Mirror Servers
+     reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist (Selects 10 fastest mirrors based on recent sync times)
+
+   ##Install Essential Packages
+      pacstrap -K /mnt base linux linux-firmware
+      Core Utilities
+      Network Tools
+      Grub Bootloader
+      File System Utilities
+      Development Tools
+      CPU Microcode
+
+   ##System Configuration
+      FSTAB
+      Chroot
+      Time
+      Localization
+      Network Config
+      Root Password
+
+##Reboot System 
+
+##Desktop Environment Setup 
+
+I was torn between KDE and Budgie but decided on KDE due to it being entirely new and more customizable. It presented more of
+a challenge and gave me more information to learn. I can also customize it to look like a Budgie environment. 
