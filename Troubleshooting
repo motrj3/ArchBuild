@@ -1,1 +1,5 @@
+##Issue1
+The first issue I ran into was not being able to boot from the USB drive. 
+I tried different ports and different drives, but the system did not recognize the drives or would populate an error message
+My next thought was Secure Boot. I disabled it in the BIOS and was able to begin the installation 
 
