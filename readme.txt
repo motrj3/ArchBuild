@@ -5,3 +5,7 @@ Installation Process
 Automation
 Network & Security Configuration
 Troubleshooting
+
+Installed using the ArchLinux.org installation guide
+
+   “Installation guide - ArchWiki,” wiki.archlinux.org. https://wiki.archlinux.org/title/Installation_guide
