@@ -51,6 +51,7 @@ After booting into the command line, I started the configuration
       CPU Microcode
       CPU Auto Frequency
       Nvidia Utils
+      Timeshift System Backups
 
    ##System Configuration
       FSTAB
