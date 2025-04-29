@@ -5,7 +5,7 @@ to a separate storage drive on the Laptop
 ##Install
 First step is to download an ISO image of Arch and use the GnuPG tool to verify the integrity of the file using the command 
 
-   'gpg --keyserver-options auto-key-retrieve --verify archlinux-2025.04.01-x86_64.iso.sig'
+   gpg --keyserver-options auto-key-retrieve --verify archlinux-2025.04.01-x86_64.iso.sig
 
 Using BalenaEtcher, I created a bootable disk using the ISO file and a USB Drive
 
@@ -23,14 +23,18 @@ After booting into the command line, I started the configuration
       dhcpcd (enable DHCP)
    
    ##Check System Clock
-      timedatect1
+      timedatectl
 
    ##Partition Drive
       cfdisk
          GPT
-            1GB EFI System
+            1GB EFI System 
+               (This partition is required for booting in UEFI mode and stores the bootloader files. 
+                  1GB ensures enough space for additional boot configurations or kernel updates.)
             50GB Root
+               (The primary system partition where all essential files, installed packages, and configurations reside.)
             8G Swap
+               (Virtual memory, beneficial for systems with limited RAM or workloads involving heavy multitasking.)
    
    ##Format & Mount Partitions
 
@@ -38,7 +42,7 @@ After booting into the command line, I started the configuration
      reflector --latest 10 --sort rate --save /etc/pacman.d/mirrorlist (Selects 10 fastest mirrors based on recent sync times)
 
    ##Install Essential Packages
-      pacstrap -K /mnt base linux linux-firmware
+      Firmware
       Core Utilities
       Network Tools
       Grub Bootloader
@@ -54,9 +58,13 @@ After booting into the command line, I started the configuration
       Network Config
       Root Password
 
+##Create User & Grant Sudo Priveledges  
+
 ##Reboot System 
 
 ##Desktop Environment Setup 
 
-I was torn between KDE and Budgie but decided on KDE due to it being entirely new and more customizable. It presented more of
-a challenge and gave me more information to learn. I can also customize it to look like a Budgie environment. 
+I was torn between KDE and Budgie, but decided on KDE due to it being entirely new, more customizable and also presented 
+more of a challenge, allowing me to learn more. 
+I enjoyed the Gnome environment, and the Budgie environment seemed to expand on it, but the aesthetics are attainable in KDE. 
+
