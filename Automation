@@ -1,1 +1,145 @@
+~/arch_automation/
+├── scripts/
+│   ├── mirrors.py (refreshes mirrors weekly)
+│   ├── cleanup.py (cleans up cache weekly)
+│   ├── update_system.py (updates system weekly)
+│   ├── aur_update.py (updates YAY weekly)
+│   ├── backup.py (creates ETC folder backup)
+│   ├── log_cleanup.py (cleans/backs up logs monthly)
+│   ├── remove_old_logs.py (removes logs dated 1 year or older)
+│   └── disk_monitor.py (monitors disk space and alerts when reaching capacity)
+├── arch_common.py 
+-----------------------------------------------------------------------------------------------------
 
+##Arch_Common.py
+
+import subprocess
+import logging
+import os
+import shutil
+from datetime import datetime
+import psutil
+
+logfile = "/var/log/arch_automation.log"
+logging.basicConfig(filename=logfile, level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+def run_cmd(cmd, desc):
+    try:
+        subprocess.run(cmd, check=True, shell=True)
+        logging.info(f"{desc} - SUCCESS")
+    except subprocess.CalledProcessError as e:
+        logging.error(f"{desc} - FAILED: {e}")
+-----------------------------------------------------------------------------------------------------
+
+##Update_System.py
+
+from arch_common import run_cmd
+run_cmd("sudo pacman -Syu --noconfirm", "System update")
+-----------------------------------------------------------------------------------------------------
+
+##AUR_Updates.py
+
+from arch_common import run_cmd
+run_cmd("yay -Syu --noconfirm", "AUR update with yay")
+-----------------------------------------------------------------------------------------------------
+
+##Mirrors.py
+
+from arch_common import run_cmd
+run_cmd("sudo reflector --country 'US' --age 12 --protocol https --sort rate --save /etc/pacman.d/mirrorlist", 
+        "Mirror list update")
+-----------------------------------------------------------------------------------------------------
+
+##Cleanup.py
+
+from arch_common import run_cmd
+run_cmd("sudo paccache -r", "Pacman cache cleanup")
+-----------------------------------------------------------------------------------------------------
+
+##Backup.py
+
+from arch_common import logging
+import os
+import shutil
+from datetime import datetime
+
+def backup_files(src="/etc", dest="/backup/etc_backup"):
+    try:
+        os.makedirs(dest, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_dest = os.path.join(dest, f"backup_{timestamp}")
+        shutil.copytree(src, backup_dest)
+        logging.info(f"Backup created at {backup_dest}")
+    except Exception as e:
+        logging.error(f"Backup FAILED: {e}")
+
+backup_files()
+-----------------------------------------------------------------------------------------------------
+
+##Log_Cleanup.py
+
+ arch_common import logging
+import os
+import shutil
+from datetime import datetime
+
+def clean_logs(log_dir="/var/log", backup_dir="/opt/arch_automation/log_backups"):
+    os.makedirs(backup_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_subdir = os.path.join(backup_dir, f"logs_{timestamp}")
+    os.makedirs(backup_subdir, exist_ok=True)
+
+    for root, _, files in os.walk(log_dir):
+        for f in files:
+            path = os.path.join(root, f)
+            try:
+                if os.path.isfile(path) and os.path.getsize(path) > 50 * 1024 * 1024:  # >50MB
+                    dest = os.path.join(backup_subdir, os.path.relpath(path, log_dir))
+                    os.makedirs(os.path.dirname(dest), exist_ok=True)
+                    shutil.copy2(path, dest)
+                    open(path, 'w').close()
+                    logging.info(f"Backed up and truncated: {path}")
+            except Exception as e:
+                logging.warning(f"Failed to clean {path}: {e}")
+
+clean_logs()
+-----------------------------------------------------------------------------------------------------
+
+##Remove_Old_logs.py
+
+from arch_common import logging
+import os
+import time
+
+def remove_old_logs(log_dir="/opt/arch_automation/log_backups", age_days=365):
+    now = time.time()
+    cutoff = now - (age_days * 86400)
+
+    for root, _, files in os.walk(log_dir):
+        for f in files:
+            path = os.path.join(root, f)
+            try:
+                if os.path.isfile(path) and os.path.getmtime(path) < cutoff:
+                    os.remove(path)
+                    logging.info(f"Deleted old log: {path}")
+            except Exception as e:
+                logging.warning(f"Failed to delete {path}: {e}")
+
+remove_old_logs()
+-----------------------------------------------------------------------------------------------------
+
+##Disk_Monitor.py
+
+from arch_common import logging
+import psutil
+
+def check_disk_space(threshold=90):
+    usage = psutil.disk_usage('/')
+    if usage.percent > threshold:
+        logging.warning(f"Disk usage high: {usage.percent}%")
+    else:
+        logging.info(f"Disk usage OK: {usage.percent}%")
+
+check_disk_space()
+-----------------------------------------------------------------------------------------------------
